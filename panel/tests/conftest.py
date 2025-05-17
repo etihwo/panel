@@ -303,6 +303,16 @@ def df_multiindex(df_mixed):
 
 
 @pytest.fixture
+def df_multiindex_column(df_mixed):
+    df_mi1 = df_mixed.copy()
+    df_mi2 = pd.DataFrame({
+        'int': [11, 12, 13, 14],
+    }, index=['idx0', 'idx1', 'idx2', 'idx3'])
+    df = pd.concat([df_mi1, df_mi2], axis=1, keys=['c1', 'c2'],names=['groups', 'subgroups'])
+    return df
+
+
+@pytest.fixture
 def hv_bokeh():
     import holoviews as hv
     hv.renderer('bokeh')

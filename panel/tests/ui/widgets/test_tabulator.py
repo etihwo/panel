@@ -1889,6 +1889,23 @@ def test_tabulator_cell_click_event(page, df_mixed):
     assert values[-1] == ('str', 0, 'A')
 
 
+def test_tabulator_cell_click_event_multiindex_column(page, df_multiindex_column):
+    widget = Tabulator(df_multiindex_column)
+
+    values = []
+    widget.on_click(lambda e: values.append((e.column, e.row, e.value)))
+
+    serve_component(page, widget)
+
+    page.locator('text="idx0"').click()
+    wait_until(lambda: len(values) >= 1, page)
+    assert values[-1] == ('index', 0, 'idx0')
+
+    page.locator('text="A"').click()
+    wait_until(lambda: len(values) >= 2, page)
+    assert values[-1] == (('c1', 'str'), 0, 'A')
+
+
 def test_tabulator_edit_event(page, df_mixed):
     widget = Tabulator(df_mixed)
 
@@ -1906,6 +1923,25 @@ def test_tabulator_edit_event(page, df_mixed):
     wait_until(lambda: len(values) >= 1, page)
     assert values[0] == ('str', 0, 'A', 'AA')
     assert df_mixed.at['idx0', 'str'] == 'AA'
+
+
+def test_tabulator_edit_event_multiindex_column(page, df_multiindex_column):
+    widget = Tabulator(df_multiindex_column)
+
+    values = []
+    widget.on_edit(lambda e: values.append((e.column, e.row, e.old, e.value)))
+
+    serve_component(page, widget)
+
+    cell = page.locator('text="A"')
+    cell.click()
+    editable_cell = page.locator('input[type="text"]')
+    editable_cell.fill("AA")
+    editable_cell.press('Enter')
+
+    wait_until(lambda: len(values) >= 1, page)
+    assert values[0] == (('c1', 'str'), 0, 'A', 'AA')
+    assert df_multiindex_column.at['idx0', ('c1', 'str')] == 'AA'
 
 
 def test_tabulator_edit_event_abort(page, df_mixed):

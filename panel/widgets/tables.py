@@ -1386,6 +1386,7 @@ class Tabulator(BaseTable):
             return
 
         event_col = self._renamed_cols.get(event.column, event.column)
+        event.column = event_col
         if self.pagination == 'remote':
             nrows = self.page_size or self.initial_page_size
             event.row = event.row+(self.page-1)*nrows
