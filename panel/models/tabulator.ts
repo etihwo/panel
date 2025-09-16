@@ -1117,7 +1117,14 @@ export class DataTabulatorView extends HTMLBoxView {
         }
       }
       tab_column.visible = (tab_column.visible != false && !this.model.hidden_columns.includes(column.field))
-      tab_column.editable = () => (this.model.editable && (editor.default_view != null))
+      const originalEditable = tab_column.editable;
+      if (typeof(originalEditable) === 'function'){
+        tab_column.editable = (cell: any) => (this.model.editable && (editor.default_view != null) && originalEditable(cell))
+      } else if (typeof(originalEditable) === 'boolean'){
+        tab_column.editable = () => (this.model.editable && (editor.default_view != null) && originalEditable)
+      }else{
+        tab_column.editable = () => (this.model.editable && (editor.default_view != null))
+      }
       if (tab_column.headerFilter) {
         if (isBoolean(tab_column.headerFilter) && isString(tab_column.editor)) {
           tab_column.headerFilter = tab_column.editor
