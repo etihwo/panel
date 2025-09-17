@@ -1,6 +1,6 @@
 import {display, undisplay} from "@bokehjs/core/dom"
 import {sum} from "@bokehjs/core/util/arrayable"
-import {isArray, isBoolean, isString, isNumber} from "@bokehjs/core/util/types"
+import {isArray, isBoolean, isFunction, isString, isNumber} from "@bokehjs/core/util/types"
 import {ModelEvent} from "@bokehjs/core/bokeh_events"
 import type {StyleSheetLike} from "@bokehjs/core/dom"
 import {div} from "@bokehjs/core/dom"
@@ -1118,9 +1118,9 @@ export class DataTabulatorView extends HTMLBoxView {
       }
       tab_column.visible = (tab_column.visible != false && !this.model.hidden_columns.includes(column.field))
       const originalEditable = tab_column.editable;
-      if (typeof(originalEditable) === 'function'){
+      if (isFunction(originalEditable)){
         tab_column.editable = (cell: any) => (this.model.editable && (editor.default_view != null) && originalEditable(cell))
-      } else if (typeof(originalEditable) === 'boolean'){
+      } else if (isBoolean(originalEditable)){
         tab_column.editable = () => (this.model.editable && (editor.default_view != null) && originalEditable)
       }else{
         tab_column.editable = () => (this.model.editable && (editor.default_view != null))
